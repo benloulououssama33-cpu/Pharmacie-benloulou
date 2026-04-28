@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صيدلية بن لولو | القرارة - حي اينورار</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2EBE75;
+            --dark-green: #1e8a52;
+            --mint-bg: #f0f9f4;
+            --glass-green: rgba(235, 250, 242, 0.85);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, #e6f7ef 0%, #ffffff 50%, #dff5eb 100%);
+            background-attachment: fixed;
+            color: #2c3e50;
+            overflow-x: hidden;
+        }
+
+        /* حل مشكلة الشاشة التي تدور للأبد */
+        #loader {
+            position: fixed; inset: 0; background: white; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease;
+        }
+        .spinner {
+            width: 60px; height: 60px; border: 6px solid #f3f3f3;
+            border-top: 6px solid var(--primary); border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Navbar سينمائي */
+        .navbar {
+            position: fixed; top: 0; width: 100%; background: var(--glass-green);
+            backdrop-filter: blur(12px); z-index: 1000; padding: 12px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.04);
+            border-bottom: 1px solid rgba(46, 190, 117, 0.1);
+        }
+
+        .hero { padding: 140px 5% 50px; text-align: center; }
+        .hero h1 { font-size: 2.8rem; color: var(--dark-green); margin-bottom: 10px; font-weight: 900; }
+
+        /* صندوق الوصفة المطور */
+        .prescription-section {
+            background: white; border-radius: 30px; padding: 35px;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.06); max-width: 600px; 
+            margin: 0 auto 50px; border: 2px dashed var(--primary);
+        }
+
+        /* المنتجات */
+        .products-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 25px; padding: 20px 5% 80px;
+        }
+        .product-card {
+            background: white; border-radius: 25px; overflow: hidden;
+            transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.02); border: 1px solid #f0f0f0;
+        }
+        .product-card:hover { transform: translateY(-12px); box-shadow: 0 20px 40px rgba(46,190,117,0.12); }
+        
+        .img-box { height: 220px; padding: 20px; display: flex; align-items: center; justify-content: center; background: #fff; }
+        .img-box img { max-height: 100%; max-width: 100%; object-fit: contain; }
+
+        /* نافذة الكمية Popup */
+        #qtyPopup {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 3000;
+            display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px);
+        }
+        .popup-box {
+            background: white; padding: 30px; border-radius: 30px; text-align: center;
+            width: 90%; max-width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        .qty-control { display: flex; align-items: center; justify-content: center; gap: 20px; margin: 25px 0; }
+        .q-btn { width: 45px; height: 45px; border-radius: 15px; border: none; background: var(--mint-bg); font-size: 1.5rem; cursor: pointer; color: var(--dark-green); font-weight: bold; }
+
+        .btn-action {
+            background: var(--primary); color: white; border: none; padding: 12px 25px;
+            border-radius: 50px; cursor: pointer; font-weight: 700; width: 100%; transition: 0.3s;
+        }
+        .btn-action:hover { background: var(--dark-green); transform: scale(1.02); }
+
+        /* قسم الموقع والخريطة */
+        .map-section { padding: 60px 5%; background: white; border-radius: 50px 50px 0 0; }
+        .map-frame { border-radius: 25px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); height: 350px; margin-top: 20px; }
+
+        footer { padding: 30px; text-align: center; color: #7f8c8d; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="spinner"></div>
+        <h2 style="margin-top: 20px; color: var(--primary);">صيدلية بن لولو</h2>
+    </div>
+
+    <nav class="navbar">
+        <div style="font-weight: 900; font-size: 1.5rem; color: var(--dark-green);">صيدلية بن لولو</div>
+        <div style="font-size: 0.85rem; font-weight: 600; color: #555;">القرارة، حي اينورار 📍</div>
+    </nav>
+
+    <section class="hero">
+        <h1>أهلاً بكم في صيدلية بن لولو</h1>
+        <p>رعايتكم الصحية بلمسة احترافية في قلب القرارة</p>
+        
+        <div class="prescription-section">
+            <h3 style="margin-bottom: 10px;">ارفع وصفة طبية (Ordonnance)</h3>
+            <p style="font-size: 0.85rem; color: #7f8c8d; margin-bottom: 20px;">اختر الصورة وسنوجهك مباشرة للواتساب لتأكيد الطلب</p>
+            <input type="file" id="pInput" style="display: none;" onchange="sendPrescription(this)">
+            <button class="btn-action" style="width: auto; padding: 12px 40px;" onclick="document.getElementById('pInput').click()">
+                📸 اختيار صورة الوصفة
+            </button>
+        </div>
+    </section>
+
+    <div class="products-grid" id="mainGrid"></div>
+
+    <div id="qtyPopup">
+        <div class="popup-box">
+            <h3 id="popName">اسم المنتج</h3>
+            <div class="qty-control">
+                <button class="q-btn" onclick="updateQty(-1)">-</button>
+                <span id="qtyVal" style="font-size: 1.8rem; font-weight: 900; min-width: 40px;">1</span>
+                <button class="q-btn" onclick="updateQty(1)">+</button>
+            </div>
+            <button class="btn-action" style="background: #25D366;" onclick="goToWhatsApp()">تأكيد وطلب عبر واتساب</button>
+            <button onclick="closePopup()" style="margin-top: 15px; background: none; border: none; color: #bdc3c7; cursor: pointer;">إلغاء</button>
+        </div>
+    </div>
+
+    <section class="map-section">
+        <h2 style="text-align: center;">موقعنا في القرارة</h2>
+        <div class="map-frame">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3513.7432168943!2d3.308252!3d32.79152!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1261390f7d5c5f5f%3A0x0!2zMzLCsDQ3JzI5LjUiTiAzwrAxOCcyOS43IkU!5e0!3m2!1sar!2sdz!4v1700000000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+        <div style="text-align: center; margin-top: 25px; line-height: 1.8;">
+            <p><strong>العنوان:</strong> حي اينورار، القرارة، ولاية غرداية</p>
+            <p><strong>واتساب:</strong> 213558061159+</p>
+        </div>
+    </section>
+
+    <footer>© 2026 صيدلية بن لولو | تصميم احترافى</footer>
+
+    <script>
+        const phone = "213558061159";
+        let activeProduct = "";
+        let qty = 1;
+
+        // حل مشكلة "يدور للأبد": إخفاء اللودر بعد 1.5 ثانية تلقائياً
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.display = 'none', 800);
+            }, 1500);
+        });
+
+        const products = [
+            { name:'Dexeryl Crème', price:1000, img:'images/daxryl.jpg' },
+            { name:'Prodermyl Crème', price:620, img:'images/prodermyl.jpg' },
+            { name:'Abusaad Lait de Chèvre', price:450, img:'images/abusaad.jpg' },
+            { name:'ACM Depiwhite', price:1400, img:'images/depiwhite.jpg' },
+            { name:'مرهم Douce Plus', price:450, img:'images/Douce Plus Pommade.jpg' }
+        ];
+
+        function render() {
+            const grid = document.getElementById('mainGrid');
+            grid.innerHTML = products.map(p => `
+                <div class="product-card">
+                    <div class="img-box">
+                        <img src="${p.img}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300x300?text=صورة+المنتج'">
+                    </div>
+                    <div style="padding: 20px; text-align: center;">
+                        <h4 style="margin-bottom: 8px;">${p.name}</h4>
+                        <div style="color: var(--primary); font-weight: 800; font-size: 1.3rem; margin-bottom: 15px;">${p.price} د.ج</div>
+                        <button class="btn-action" onclick="openPopup('${p.name}')">أضف إلى السلة</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openPopup(name) {
+            activeProduct = name; qty = 1;
+            document.getElementById('popName').innerText = name;
+            document.getElementById('qtyVal').innerText = "1";
+            document.getElementById('qtyPopup').style.display = 'flex';
+        }
+
+        function updateQty(v) {
+            qty = Math.max(1, qty + v);
+            document.getElementById('qtyVal').innerText = qty;
+        }
+
+        function closePopup() { document.getElementById('qtyPopup').style.display = 'none'; }
+
+        function goToWhatsApp() {
+            const text = encodeURIComponent(`مرحباً صيدلية بن لولو، أود طلب:\n- المنتج: ${activeProduct}\n- الكمية: ${qty}`);
+            window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+            closePopup();
+        }
+
+        function sendPrescription(input) {
+            if(input.files && input.files[0]) {
+                const text = encodeURIComponent("مرحباً صيدلية بن لولو، لقد قمت باختيار صورة الوصفة الطبية من الموقع، سأقوم بإرسالها لكم الآن.");
+                window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+            }
+        }
+
+        render();
+    </script>
+</body>
+</html>
